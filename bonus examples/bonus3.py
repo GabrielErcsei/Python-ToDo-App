@@ -1,0 +1,2 @@
+meals = ['Pizza', 'Pasta', 'Salad']
+
