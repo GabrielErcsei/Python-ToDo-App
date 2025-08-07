@@ -5,9 +5,12 @@ import FreeSimpleGUI as simpleGui
 label = simpleGui.Text("Type in a to-do item")
 input_box = simpleGui.InputText(tooltip="Enter to-do", key="todo")
 add_button = simpleGui.Button(button_text="Add", key="add_button")
+list_box = simpleGui.Listbox(values=functions.get_todos_from_file(), key="todo_items",
+                             enable_events=True, size=(45, 10))
+edit_button = simpleGui.Button(button_text="Edit", key="edit_button")
 
 window = simpleGui.Window("My To-Do App",
-                          layout=[[label], [input_box, add_button]],
+                          layout=[[label], [input_box, add_button], [list_box, edit_button]],
                           font=('Helvetica', 20))
 while True:
     event, values = window.read()
@@ -18,6 +21,20 @@ while True:
             todo_list = functions.get_todos_from_file()
             todo_list.append(values['todo'] + '\n')
             functions.write_todos_to_file(todo_list)
+            window['todo_items'].update(values=todo_list)
+
+        case 'edit_button':
+            item_to_edit = values['todo_items'][0]
+            new_todo = values['todo']
+
+            todo_list = functions.get_todos_from_file()
+            item_to_edit_index = todo_list.index(item_to_edit)
+            todo_list[item_to_edit_index] = new_todo
+            functions.write_todos_to_file(todo_list)
+            window['todo_items'].update(values=todo_list)
+
+        case "todo_items":
+            window['todo'].update(value=values['todo_items'][0])
         case simpleGui.WIN_CLOSED:
             break
 
